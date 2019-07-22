@@ -1,7 +1,6 @@
 # DFRobot_CCS811
 这是一个用于测试二氧化碳和VOC浓度的传感器<br>
 这个传感器通过IIC通信，测量范围为400-8000ppm<br>
-这里需要显示拍照图片，可以一张图片，可以多张图片（不要用SVG图）
 
 ![正反面svg效果图](https://github.com/ouki-wang/DFRobot_Sensor/raw/master/resources/images/SEN0245svg1.png)
 
@@ -20,7 +19,8 @@
 
 ## Summary
 
-这里填写当前Arduino软件库完成了哪些功能
+这个库可以用于读取二氧化碳和VOC浓度
+这个库可以改变读取数据频率和设置环境参数以校准读取数据
 
 ## Installation
 
