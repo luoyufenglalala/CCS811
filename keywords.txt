@@ -13,12 +13,16 @@ DFRobot_CCS811	KEYWORD1
 #######################################
 
 begin	KEYWORD2
-getCO2	KEYWORD2
-getTVOC	KEYWORD2
+getCO2PPM	KEYWORD2
+getTVOCPPB	KEYWORD2
 checkDataReady	KEYWORD2
 softReset	KEYWORD2
-setInTemHum	KEYWORD2
+setInTempHum	KEYWORD2
 setMeasurementMode	KEYWORD2
+setThresholds	KEYWORD2
+setTempOffset	KEYWORD2
+getMeasurementMode	KEYWORD2
+getCurrentTemp	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)

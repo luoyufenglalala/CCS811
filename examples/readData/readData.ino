@@ -25,15 +25,15 @@ void setup(void)
     }
     while(sensor.checkDataReady() != true){}
     float temp = sensor.getCurrentTemp();
-    sensor.setTempOffset(temp - 25.0);
+    sensor.setTempOffset(temp - /*当前温度*/25.0);
 }
 void loop() {
     if(sensor.checkDataReady() == true){
         float temp = sensor.getCurrentTemp();
         Serial.print("CO2: ");
-        Serial.print(sensor.getCO2());
+        Serial.print(sensor.getCO2PPM());
         Serial.print("ppm, TVOC: ");
-        Serial.print(sensor.getTVOC());
+        Serial.print(sensor.getTVOCPPB());
         Serial.print("ppb, temp: ");
         Serial.print(temp);
         Serial.println("℃ ");

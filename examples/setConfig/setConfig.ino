@@ -22,7 +22,7 @@ void setup(void)
         Serial.println("初始化芯片失败，请确认芯片连接是否正确");
         delay(1000);
     }
-    Serial.print("当前配置参数码是")
+    Serial.print("当前配置参数码是");
     Serial.println(sensor.getMeasurementMode(),HEX);
     /**
      * @brief 设置测量和条件配置参数
@@ -42,18 +42,18 @@ void setup(void)
      * @param temperature 设置环境温度,单位为℃,范围是-40~85℃
      * @param humidity    设置环境湿度,单位为RH,范围是0~100RH
      */
-    sensor.setInTempHum(25,50);
+    sensor.setInTempHum(/*temperature=*/25,/*humidity=*/50);
     while(sensor.checkDataReady() != true){}
     float temp = sensor.getCurrentTemp();
-    sensor.setTempOffset(temp - 25.0);
+    sensor.setTempOffset(temp - /*temperature=*/25.0);
 }
 void loop() {
     if(sensor.checkDataReady() == true){
         float temp = sensor.getCurrentTemp();
         Serial.print("CO2: ");
-        Serial.print(sensor.getCO2());
+        Serial.print(sensor.getCO2PPM());
         Serial.print("ppm, TVOC: ");
-        Serial.print(sensor.getTVOC());
+        Serial.print(sensor.getTVOCPPB());
         Serial.print("ppb, temp: ");
         Serial.print(temp);
         Serial.println("℃ ");
@@ -61,5 +61,6 @@ void loop() {
     else{
         Serial.println("Data is not ready!");
     }
-    delay(1000);
+    //延时时间根据工作模式设定，不应低于工作模式最低延时
+    delay(250);
 }

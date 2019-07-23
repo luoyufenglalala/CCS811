@@ -21,8 +21,10 @@
 
 ## Summary
 
-这个库可以用于读取二氧化碳(单位为ppm)和VOC浓度(单位为ppb)<br>
-这个库可以改变读取数据频率和设置环境参数以校准读取数据<br>
+这个库可以用于读取二氧化碳浓度(单位为ppm(parts per million),正常空气中二氧化碳浓度不高于500ppm，高于1000ppm时人体感到不适)<br>
+这个库可以用于读取TVOC浓度(单位为ppb(parts per billion))<br>
+这个库可以改变读取数据采样间隔以改变功率消耗br>
+这个库可以通过设置环境参数以校准读取数据<br>
 这个库可以设置阈值进行中断测量
 
 ## Installation
@@ -92,13 +94,13 @@ To use this library, first download the library file, paste it into the \Arduino
    * @brief 获取当前二氧化碳浓度
    * @return 当前二氧化碳浓度，单位为ppm
    */
-  uint16_t  getCO2();
+  uint16_t  getCO2PPM();
 
   /**
    * @brief 获取当前VOC浓度
    * @return 返回当前VOC浓度，单位为ppb
    */
-  uint16_t getTVOC();
+  uint16_t getTVOCPPB();
   
   /**
    * @brief 获取当前气温
@@ -115,7 +117,7 @@ Arduino uno        |      √       |              |             |
 Mega2560        |      √       |              |             | 
 Leonardo        |      √       |              |             | 
 ESP32        |      √       |              |             | 
-Micro:bit        |      √       |              |             | 
+micro:bit        |      √       |              |             | 
 
 
 ## History

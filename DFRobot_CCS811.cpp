@@ -1,6 +1,6 @@
 /*!
  * @file DFRobot_CCS811.cpp
- * @brief 定义DFRobot_CCS811 类的基础结构
+ * @brief 定义DFRobot_CCS811 类的基础结构，基础方法的实现
  * @copyright	Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
  * @licence     The MIT License (MIT)
  * @author [yufeng](yufeng.luo@dfrobot.com)
@@ -92,14 +92,14 @@ void DFRobot_CCS811::setThresholds(uint16_t lowToMed, uint16_t medToHigh, uint8_
     writeReg(CCS811_REG_THRESHOLDS, buffer, 5);
 }
 
-uint16_t DFRobot_CCS811::getCO2(){
+uint16_t DFRobot_CCS811::getCO2PPM(){
     uint8_t buffer[8];
     readReg(CCS811_REG_ALG_RESULT_DATA, buffer, 8);
     eCO2 = (((uint16_t)buffer[0] << 8) | (uint16_t)buffer[1]);
     return eCO2;
 }
 
-uint16_t DFRobot_CCS811::getTVOC(){
+uint16_t DFRobot_CCS811::getTVOCPPB(){
     uint8_t buffer[8];
     readReg(CCS811_REG_ALG_RESULT_DATA, buffer, 8);
     eTVOC = (((uint16_t)buffer[2] << 8) | (uint16_t)buffer[3]);
@@ -135,9 +135,6 @@ double DFRobot_CCS811::getCurrentTemp(){
     double ntcTemp;
     ntcTemp = (log((double)rNtc / 100000)) /3380 + (1.0 / (25 + 273.15));
     ntcTemp = 1.0 / ntcTemp - 273.15;
-    Serial.print(ntcTemp);
-    Serial.print("   ");
-    Serial.println(tempOffset);
     return ntcTemp - tempOffset;
 }
 

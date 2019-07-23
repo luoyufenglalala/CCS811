@@ -21,8 +21,8 @@
 
 
 /*I2C ADDRESS*/
-#define I2C_ADDRESS1                             0x5A
-#define I2C_ADDRESS2                             0x5B
+#define CCS811_I2C_ADDRESS1                      0x5A
+#define CCS811_I2C_ADDRESS2                      0x5B
 
 #define CCS811_REG_STATUS                        0x00
 #define CCS811_REG_MEAS_MODE                     0x01
@@ -70,7 +70,10 @@ public:
     #define ERR_OK             0      //无错误
     #define ERR_DATA_BUS      -1      //数据总线错误
     #define ERR_IC_VERSION    -2      //芯片版本不匹配
-    
+    /**
+     * @brief 构造函数
+     * @param 传入Wire地址
+     */
     DFRobot_CCS811(TwoWire *pWire = &Wire){_pWire = pWire;};
     
          /**
@@ -79,8 +82,8 @@ public:
           */
     int  begin();
          /**
-          * @brief 初始化函数
-          * @return 返回0表示初始化成功，返回其他值表示初始化失败
+          * @brief 判断有无数据读取
+          * @return 返回1表示有数据读取，返回0表示无数据读取
           */
     bool checkDataReady();
          /**
@@ -125,12 +128,12 @@ public:
                * @brief 获取当前二氧化碳浓度
                * @return 返回当前二氧化碳浓度，单位为ppm
                */
-    uint16_t  getCO2(),
+    uint16_t  getCO2PPM(),
               /**
                * @brief 获取当前VOC浓度
                * @return 返回当前VOC浓度，单位为ppb
                */
-              getTVOC();
+              getTVOCPPB();
               /**
                * @brief 获取当前气温
                * @return 返回当前气温，单位为摄氏度
@@ -224,7 +227,7 @@ protected:
 
 private:
     TwoWire *_pWire;
-    uint8_t _deviceAddr = I2C_ADDRESS1;
+    uint8_t _deviceAddr = CCS811_I2C_ADDRESS1;
     
     uint16_t eCO2;
     uint16_t eTVOC;
