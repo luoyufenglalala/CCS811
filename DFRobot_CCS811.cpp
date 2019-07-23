@@ -29,7 +29,7 @@ int DFRobot_CCS811::begin(void)
     }
     writeReg(CCS811_BOOTLOADER_APP_START, NULL, 0);
     setMeasurementMode(0,0,eMode4);
-    setInTemHum(25, 50);
+    setInTempHum(25, 50);
     return ERR_OK;
 }
 
@@ -43,6 +43,7 @@ bool DFRobot_CCS811::checkDataReady()
     int8_t status[1] = {0};
     readReg(CCS811_REG_STATUS, status, 1);
     DBG(status[0],HEX);
+    delay(100);
     if(!((status[0] >> 3) & 0x01))
         return false;
     else 
@@ -56,12 +57,39 @@ void DFRobot_CCS811::setMeasurementMode(uint8_t thresh, uint8_t interrupt, eDRIV
     writeReg(CCS811_REG_MEAS_MODE, measurement, 1);
 }
 
+uint8_t DFRobot_CCS811::getMeasurementMode(){
+    uint8_t meas[1] = {0};
+    readReg(CCS811_REG_MEAS_MODE, meas, 1);
+    return meas[0];
+    // thresh = _meas[0] >> 2;
+    // interrupt = _meas[0] >> 3;
+    // driveMode = _meas[0] >> 4;
+}
+/*
+bool DFRobot_CCS811::getThresh(){
+    if(!thresh)
+        return false;
+    else
+        return true;
+}
+
+bool DFRobot_CCS811::getInterrupt(){
+    if(!interrupt)
+        return false;
+    else
+        return true;
+}
+
+eDRIVE_MODE_t DFRobot_CCS811::getDriveMode(){
+    return driveMode;
+}
+*/
 void DFRobot_CCS811::setThresholds(uint16_t lowToMed, uint16_t medToHigh, uint8_t hysteresis)
 {
-    uint8_t buf[] = {(uint8_t)((lowToMed >> 8) & 0xF), (uint8_t)(lowToMed & 0xF),
+    uint8_t buffer[] = {(uint8_t)((lowToMed >> 8) & 0xF), (uint8_t)(lowToMed & 0xF),
     (uint8_t)((medToHigh >> 8) & 0xF), (uint8_t)(medToHigh & 0xF), hysteresis};
     
-    writeReg(CCS811_REG_THRESHOLDS, buf, 5);
+    writeReg(CCS811_REG_THRESHOLDS, buffer, 5);
 }
 
 uint16_t DFRobot_CCS811::getCO2(){
@@ -78,7 +106,7 @@ uint16_t DFRobot_CCS811::getTVOC(){
     return eTVOC;
 }
 
-void DFRobot_CCS811::setInTemHum(float temperature, float humidity)    // compensate for temperature and relative humidity
+void DFRobot_CCS811::setInTempHum(float temperature, float humidity)    // compensate for temperature and relative humidity
 {
     int _temp, _rh;
     if(temperature>0)
@@ -96,6 +124,25 @@ void DFRobot_CCS811::setInTemHum(float temperature, float humidity)    // compen
     envData[3] = 0;
     
     writeReg(CCS811_REG_ENV_DATA, &envData, 4);
+}
+
+double DFRobot_CCS811::getCurrentTemp(){
+    uint8_t buffer[4];
+    readReg(CCS811_REG_NTC, buffer, 4);
+    uint16_t vRef = ((uint16_t)buffer[0] << 8)|buffer[1];
+    uint16_t vNtc = ((uint16_t)buffer[2] << 8)|buffer[3];
+    uint16_t rNtc = vNtc * 100000/ vRef;
+    double ntcTemp;
+    ntcTemp = (log((double)rNtc / 100000)) /3380 + (1.0 / (25 + 273.15));
+    ntcTemp = 1.0 / ntcTemp - 273.15;
+    Serial.print(ntcTemp);
+    Serial.print("   ");
+    Serial.println(tempOffset);
+    return ntcTemp - tempOffset;
+}
+
+void DFRobot_CCS811::setTempOffset(float offset){
+    tempOffset = offset;
 }
 
 void DFRobot_CCS811::writeReg(uint8_t reg, const void* pBuf, size_t size)

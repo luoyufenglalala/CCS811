@@ -6,9 +6,9 @@
  * @copyright	Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
  * @licence     The MIT License (MIT)
  * @author [LuoYufeng](yufeng.luo@dfrobot.com)
- * @version  V1.0
- * @date  2019-07-13
- * @https://github.com/DFRobot/DFRobot_Sensor
+ * @version  V0.1
+ * @date  2019-07-19
+ * @https://github.com/DFRobot/DFRobot_CCS811
  */
 #include "DFRobot_CCS811.h"
 
@@ -23,16 +23,22 @@ void setup(void)
         Serial.println("初始化芯片失败，请确认芯片连接是否正确");
         delay(1000);
     }
+    while(sensor.checkDataReady() != true){}
+    float temp = sensor.getCurrentTemp();
+    sensor.setTempOffset(temp - 25.0);
 }
 void loop() {
     if(sensor.checkDataReady() == true){
+        float temp = sensor.getCurrentTemp();
         Serial.print("CO2: ");
         Serial.print(sensor.getCO2());
         Serial.print("ppm, TVOC: ");
         Serial.print(sensor.getTVOC());
-        Serial.println("ppb");
-    }
-    else{
+        Serial.print("ppb, temp: ");
+        Serial.print(temp);
+        Serial.println("℃ ");
+        
+    } else {
         Serial.println("Data is not ready!");
     }
     //延时不能低于250ms

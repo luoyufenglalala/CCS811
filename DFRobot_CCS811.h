@@ -55,7 +55,13 @@
 #define DBG(...)
 #endif
 
-
+typedef enum{
+    eMode0, //Idle (Measurements are disabled in this mode)
+    eMode1, //Constant power mode, IAQ measurement every second
+    eMode2, //Pulse heating mode IAQ measurement every 10 seconds
+    eMode3, //Low power pulse heating mode IAQ measurement every 60 seconds
+    eMode4  //Constant power mode, sensor measurement every 250ms 1xx: Reserved modes (For future use)
+}eDRIVE_MODE_t;
 
 
 class DFRobot_CCS811
@@ -66,14 +72,6 @@ public:
     #define ERR_IC_VERSION    -2      //芯片版本不匹配
     
     DFRobot_CCS811(TwoWire *pWire = &Wire){_pWire = pWire;};
-    
-    typedef enum{
-        eMode0, //Idle (Measurements are disabled in this mode)
-        eMode1, //Constant power mode, IAQ measurement every second
-        eMode2, //Pulse heating mode IAQ measurement every 10 seconds
-        eMode3, //Low power pulse heating mode IAQ measurement every 60 seconds
-        eMode4  //Constant power mode, sensor measurement every 250ms 1xx: Reserved modes (For future use)
-    }eDRIVE_MODE_t;
     
          /**
           * @brief 初始化函数
@@ -94,7 +92,7 @@ public:
           * @param temperature 设置环境温度,单位为℃,范围是-40~85℃
           * @param humidity    设置环境湿度,单位为RH,范围是0~100RH
           */
-         setInTemHum(float temperature, float humidity),
+         setInTempHum(float temperature, float humidity),
          /**
           * @brief 设置测量和条件配置参数
           * @param thresh:0 for Interrupt mode operates normally; 1 for interrupt mode only asserts the nINT signal (driven low) if the new
@@ -108,8 +106,21 @@ public:
           * @param medToHigh:中到高范围触发中断的值
           * @param hysteresis:超出阈值的滞后值
           */
-         setThresholds(uint16_t lowToMed, uint16_t medToHigh, uint8_t hysteresis);
-         
+         setThresholds(uint16_t lowToMed, uint16_t medToHigh, uint8_t hysteresis),
+         /**
+          * @brief 设置温度偏移校准值，用于校准NTC测量的误差
+          * @param offset:该偏移量用于温度计算中
+          */
+         setTempOffset(float offset);
+         /**
+          * @brief 获取当前配置参数
+          * @return 配置参数代码，需要转换成二进制代码进行解析
+          *         第2位0: Interrupt mode (if enabled) operates normally,1: Interrupt mode (if enabled) only asserts the nINT signal (driven low) if the new
+          *         第3位0: Interrupt generation is disabled,1: The nINT signal is asserted (driven low) when a new sample is ready in
+          *         第4:6位:in typedef enum eDRIVE_MODE_t
+          */
+    uint8_t getMeasurementMode();
+
               /**
                * @brief 获取当前二氧化碳浓度
                * @return 返回当前二氧化碳浓度，单位为ppm
@@ -120,7 +131,15 @@ public:
                * @return 返回当前VOC浓度，单位为ppb
                */
               getTVOC();
-    
+              /**
+               * @brief 获取当前气温
+               * @return 返回当前气温，单位为摄氏度
+               */
+    double    getCurrentTemp();
+              /**
+               * @brief 获取当前温度偏移校准值
+               * @return 返回当前偏移校准值，单位为摄氏度
+               */
     
 protected:
 
@@ -197,6 +216,7 @@ protected:
     void getData(void);
     
     void writeConfig();
+         
     virtual void writeReg(uint8_t reg, const void* pBuf, size_t size);
     virtual uint8_t readReg(uint8_t reg, const void* pBuf, size_t size);
     
@@ -208,6 +228,9 @@ private:
     
     uint16_t eCO2;
     uint16_t eTVOC;
+    uint8_t thresh, interrupt;
+    eDRIVE_MODE_t driveMode;
+    float tempOffset;
 };
 
 #endif
