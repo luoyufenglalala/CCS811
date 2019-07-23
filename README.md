@@ -23,9 +23,9 @@
 
 这个库可以用于读取二氧化碳浓度(单位为ppm(parts per million),正常空气中二氧化碳浓度不高于500ppm，高于1000ppm时人体感到不适)<br>
 这个库可以用于读取TVOC浓度(单位为ppb(parts per billion))<br>
-这个库可以改变读取数据采样间隔以改变功率消耗br>
+这个库可以改变读取数据采样间隔以改变功率消耗<br>
 这个库可以通过设置环境参数以校准读取数据<br>
-这个库可以设置阈值进行中断测量
+这个库支持中断测量
 
 ## Installation
 
@@ -86,7 +86,11 @@ To use this library, first download the library file, paste it into the \Arduino
    * @return 配置参数代码，需要转换成二进制代码进行解析
    *         第2位0: Interrupt mode (if enabled) operates normally,1: Interrupt mode (if enabled) only asserts the nINT signal (driven low) if the new
    *         第3位0: Interrupt generation is disabled,1: The nINT signal is asserted (driven low) when a new sample is ready in
-   *         第4:6位:in typedef enum eDRIVE_MODE_t
+   *         第4:6位:000 Idle (Measurements are disabled in this mode)
+   *                 001 Constant power mode, IAQ measurement every second
+   *                 010 Pulse heating mode IAQ measurement every 10 seconds
+   *                 011 Low power pulse heating mode IAQ measurement every 60 seconds
+   *                 100 Constant power mode, sensor measurement every 250ms 
    */
   uint8_t getMeasurementMode();
   

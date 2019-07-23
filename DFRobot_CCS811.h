@@ -55,74 +55,72 @@
 #define DBG(...)
 #endif
 
-typedef enum{
-    eMode0, //Idle (Measurements are disabled in this mode)
-    eMode1, //Constant power mode, IAQ measurement every second
-    eMode2, //Pulse heating mode IAQ measurement every 10 seconds
-    eMode3, //Low power pulse heating mode IAQ measurement every 60 seconds
-    eMode4  //Constant power mode, sensor measurement every 250ms 1xx: Reserved modes (For future use)
-}eDRIVE_MODE_t;
-
-
 class DFRobot_CCS811
 {
 public:
     #define ERR_OK             0      //无错误
     #define ERR_DATA_BUS      -1      //数据总线错误
     #define ERR_IC_VERSION    -2      //芯片版本不匹配
+    typedef enum{
+        eMode0, //Idle (Measurements are disabled in this mode)
+        eMode1, //Constant power mode, IAQ measurement every second
+        eMode2, //Pulse heating mode IAQ measurement every 10 seconds
+        eMode3, //Low power pulse heating mode IAQ measurement every 60 seconds
+        eMode4  //Constant power mode, sensor measurement every 250ms 1xx: Reserved modes (For future use)
+    }eDRIVE_MODE_t;
     /**
      * @brief 构造函数
      * @param 传入Wire地址
      */
     DFRobot_CCS811(TwoWire *pWire = &Wire){_pWire = pWire;};
     
-         /**
-          * @brief 初始化函数
-          * @return 返回0表示初始化成功，返回其他值表示初始化失败
-          */
-    int  begin();
-         /**
-          * @brief 判断有无数据读取
-          * @return 返回1表示有数据读取，返回0表示无数据读取
-          */
-    bool checkDataReady();
-         /**
-          * @brief 复位传感器，清除所有配置数据
-          */
-    void softReset(),
-         /**
-          * @brief 设置环境参数
-          * @param temperature 设置环境温度,单位为℃,范围是-40~85℃
-          * @param humidity    设置环境湿度,单位为RH,范围是0~100RH
-          */
-         setInTempHum(float temperature, float humidity),
-         /**
-          * @brief 设置测量和条件配置参数
-          * @param thresh:0 for Interrupt mode operates normally; 1 for interrupt mode only asserts the nINT signal (driven low) if the new
-          * @param interrupt:0 for Interrupt generation is disabled; 1 for the nINT signal is asserted (driven low) when a new sample is ready in
-          * @param mode:in typedef enum eDRIVE_MODE_t
-          */
-         setMeasurementMode(uint8_t thresh, uint8_t interrupt, eDRIVE_MODE_t mode),
-         /**
-          * @brief 设置中断阈值
-          * @param lowToMed:低到中范围触发中断的值
-          * @param medToHigh:中到高范围触发中断的值
-          * @param hysteresis:超出阈值的滞后值
-          */
-         setThresholds(uint16_t lowToMed, uint16_t medToHigh, uint8_t hysteresis),
-         /**
-          * @brief 设置温度偏移校准值，用于校准NTC测量的误差
-          * @param offset:该偏移量用于温度计算中
-          */
-         setTempOffset(float offset);
-         /**
-          * @brief 获取当前配置参数
-          * @return 配置参数代码，需要转换成二进制代码进行解析
-          *         第2位0: Interrupt mode (if enabled) operates normally,1: Interrupt mode (if enabled) only asserts the nINT signal (driven low) if the new
-          *         第3位0: Interrupt generation is disabled,1: The nINT signal is asserted (driven low) when a new sample is ready in
-          *         第4:6位:in typedef enum eDRIVE_MODE_t
-          */
-    uint8_t getMeasurementMode();
+              /**
+               * @brief 初始化函数
+               * @return 返回0表示初始化成功，返回其他值表示初始化失败
+               */
+    int       begin();
+              /**
+               * @brief 判断有无数据读取
+               * @return 返回1表示有数据读取，返回0表示无数据读取
+               */
+    bool      checkDataReady();
+              /**
+               * @brief 复位传感器，清除所有配置数据
+               */
+    void      softReset(),
+              /**
+               * @brief 设置环境参数
+               * @param temperature 设置环境温度,单位为℃,范围是-40~85℃
+               * @param humidity    设置环境湿度,单位为RH,范围是0~100RH
+               */
+              setInTempHum(float temperature, float humidity),
+              /**
+               * @brief 设置测量和条件配置参数
+               * @param thresh:0 for Interrupt mode operates normally; 1 for interrupt mode only asserts the nINT signal (driven low) if the new
+               * @param interrupt:0 for Interrupt generation is disabled; 1 for the nINT signal is asserted (driven low) when a new sample is ready in
+               * @param mode:in typedef enum eDRIVE_MODE_t
+               */
+              setMeasurementMode(uint8_t thresh, uint8_t interrupt, eDRIVE_MODE_t mode),
+              /**
+               * @brief 设置中断阈值
+               * @param lowToMed:低到中范围触发中断的值
+               * @param medToHigh:中到高范围触发中断的值
+               * @param hysteresis:超出阈值的滞后值
+               */
+              setThresholds(uint16_t lowToMed, uint16_t medToHigh, uint8_t hysteresis),
+              /**
+               * @brief 设置温度偏移校准值，用于校准NTC测量的误差
+               * @param offset:该偏移量用于温度计算中
+               */
+              setTempOffset(float offset);
+              /**
+               * @brief 获取当前配置参数
+               * @return 配置参数代码，需要转换成二进制代码进行解析
+               *         第2位0: Interrupt mode (if enabled) operates normally,1: Interrupt mode (if enabled) only asserts the nINT signal (driven low) if the new
+               *         第3位0: Interrupt generation is disabled,1: The nINT signal is asserted (driven low) when a new sample is ready in
+               *         第4:6位:in typedef enum eDRIVE_MODE_t
+               */
+    uint8_t   getMeasurementMode();
 
               /**
                * @brief 获取当前二氧化碳浓度
@@ -231,8 +229,6 @@ private:
     
     uint16_t eCO2;
     uint16_t eTVOC;
-    uint8_t thresh, interrupt;
-    eDRIVE_MODE_t driveMode;
     float tempOffset;
 };
 

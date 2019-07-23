@@ -36,7 +36,7 @@ void setup(void)
      *                eMode4  //Constant power mode, sensor measurement every 250ms 1xx: Reserved modes (For future use)
      *               }eDRIVE_MODE_t;
      */
-    sensor.setMeasurementMode(0, 0, eMode4);
+    sensor.setMeasurementMode(0, 0, sensor.eMode4);
     /**
      * @brief 设置环境参数
      * @param temperature 设置环境温度,单位为℃,范围是-40~85℃

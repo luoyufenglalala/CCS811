@@ -14,7 +14,6 @@
 int DFRobot_CCS811::begin(void)
 {
     uint8_t id=0;
-    //uint8_t _mode[1] = {0x40};
     Wire.begin();
     softReset();
     delay(100);
@@ -53,7 +52,6 @@ bool DFRobot_CCS811::checkDataReady()
 void DFRobot_CCS811::setMeasurementMode(uint8_t thresh, uint8_t interrupt, eDRIVE_MODE_t mode){
     uint8_t measurement[1] = {0};
     measurement[0] = (thresh << 2) | (interrupt << 3) | (mode << 4);
-    //Serial.println(*measurement);
     writeReg(CCS811_REG_MEAS_MODE, measurement, 1);
 }
 
@@ -61,29 +59,8 @@ uint8_t DFRobot_CCS811::getMeasurementMode(){
     uint8_t meas[1] = {0};
     readReg(CCS811_REG_MEAS_MODE, meas, 1);
     return meas[0];
-    // thresh = _meas[0] >> 2;
-    // interrupt = _meas[0] >> 3;
-    // driveMode = _meas[0] >> 4;
-}
-/*
-bool DFRobot_CCS811::getThresh(){
-    if(!thresh)
-        return false;
-    else
-        return true;
 }
 
-bool DFRobot_CCS811::getInterrupt(){
-    if(!interrupt)
-        return false;
-    else
-        return true;
-}
-
-eDRIVE_MODE_t DFRobot_CCS811::getDriveMode(){
-    return driveMode;
-}
-*/
 void DFRobot_CCS811::setThresholds(uint16_t lowToMed, uint16_t medToHigh, uint8_t hysteresis)
 {
     uint8_t buffer[] = {(uint8_t)((lowToMed >> 8) & 0xF), (uint8_t)(lowToMed & 0xF),
